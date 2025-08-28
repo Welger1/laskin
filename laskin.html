@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Laskin</title>
+</head>
+<body>
+  
+  <main class="container">
+  <header class="otsikko">LASKIN</header>
+  <input type="number" id="luku1" placeholder="Syötä luku">
+   <span class="plus-sign">+</span>
+  <input type="number" id="luku2" placeholder="Syötä luku">
+  <button id="laske-nappi" onclick="laskeSumma()">&nbsp = &nbsp</button>
+  <button id="nollaa-nappi" onclick="nollaaLaskin()">Nollaa</button>
+  <div class="tulos-laatikko">
+    <p id="tulos"></p>
+  </div>
+  
+  </main>
+
+
+<!--JavaScript-->
+
+<script>
+    function laskeSumma() {
+  // Haetaan syöttökentistä arvot
+  let luku1 = parseFloat(document.getElementById("luku1").value.replace(",","."));
+  let luku2 = parseFloat(document.getElementById("luku2").value.replace(",","."));
+
+  // Virhe tarkistukset
+  if (isNaN(luku1) || isNaN(luku2)) {
+  document.getElementById("tulos").textContent = "Syötä molemmat luvut!";
+  return;
+  }
+  if (!isFinite(luku1) || !isFinite(luku2)) {
+  document.getElementById("tulos").textContent = "Syötä validit luvut!";
+  return;
+    }
+  if (luku1 < 0 || luku2 < 0) {
+  document.getElementById("tulos").textContent = "Syötä positiiviset luvut!";
+  return;
+  }
+
+  //  Lasketaan summa
+  let summa = luku1 + luku2;
+  if (!isFinite(summa)) {
+  document.getElementById("tulos").textContent = "Tulos on liian suuri!";
+  return;
+  }
+ 
+  //  Näytetään tulos
+  document.getElementById("tulos").textContent = "Tulos: " + summa.toFixed(2);
+}
+
+    
+
+function nollaaLaskin() {
+      // Tyhjennä input-kentät
+      document.getElementById("luku1").value = "";
+      document.getElementById("luku2").value = "";
+      // Tyhjennä tulos
+      document.getElementById("tulos").textContent = "";
+    }
+
+  </script>
+
+
+</body>
+</html>

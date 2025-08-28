@@ -1,0 +1,109 @@
+body {
+  background: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 600px;
+  height: 380px;
+  padding: 5px;
+  margin-top: 40px;
+  background-image: linear-gradient(to right, rgb(255, 234, 234), pink, pink, rgb(255, 241, 241));
+  border-radius: 40px;
+  border: none;
+  box-shadow: 0 5px 8px rgb(0, 0, 0, 0.5);
+  text-align: center;
+  align-items: center;
+}
+
+.otsikko {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: rgb(56, 116, 118);
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 24px;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 1px 3px rgb(0, 0, 0, 0.5);
+}
+
+input {
+  height: 30px;
+  background-color: rgb(60, 60, 252);
+  color: white;
+  border-radius: 25px;
+  border: none;
+  margin-top: 30px;
+  padding: 5px;
+  text-align: center;
+  box-shadow:  0 5px 8px rgb(0, 0, 0, 0.5);
+}
+
+.plus-sign {
+  font-size: 22px;
+  font-weight: bolder;
+  margin: 0 8px;
+}
+
+input[type="number"]::placeholder {
+  color: rgb(189, 189, 178);
+}
+
+#laske-nappi {
+  width: 40px;
+  height: 40px;
+  margin: 0 8px;
+  margin-left: 12px;
+  background-color: rgb(246, 246, 246);
+  border: 1px solid rgb(46, 46, 250);
+  border-radius: 50px;
+  box-shadow:  0 5px 8px rgb(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+#laske-nappi:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 3px rgba (0, 0, 0, 0.3);
+  background-color: rgb(220, 220, 220); /* Tausta tummenee */
+}
+
+#nollaa-nappi {
+  width: 60px;
+  height: 40px;
+  margin: 0 8px;
+  background-color: rgb(246, 246, 246);
+  border: 1px solid rgb(46, 46, 250);
+  border-radius: 35px;
+  box-shadow:  0 5px 8px rgb(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.tulos-laatikko {
+  background-image: linear-gradient(to right, rgb(255, 234, 234), pink, pink, rgb(255, 241, 241));
+  display: flex;
+  margin-top: 50px;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 60px;
+  border-radius: 40px;
+  box-shadow:  0 5px 8px rgb(0, 0, 0, 0.5);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#tulos {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 24px;
+  color: rgb(40, 69, 40);
+}
+
