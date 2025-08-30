@@ -1,7 +1,7 @@
 {
   "name": "laskin",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "laskin.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/Welger1/laskin.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Olli Suominen",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Welger1/laskin/issues"
