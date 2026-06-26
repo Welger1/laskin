@@ -3,63 +3,652 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
   <title>Laskin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-image: url('Gemini_Generated_Image_4oduke4oduke4odu.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 16px;
+      gap: 14px;
+    }
+
+    /* ── Välilehtipalkki (yläpuolella) ── */
+    .valilehdet {
+      display: flex;
+      gap: 8px;
+      background: rgba(20, 20, 30, 0.55);
+      backdrop-filter: blur(20px) saturate(1.5);
+      -webkit-backdrop-filter: blur(20px) saturate(1.5);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      padding: 5px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      width: min(360px, 100%);
+    }
+
+    .valilehti {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 8px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      flex: 1;
+      transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .valilehti:hover { color: rgba(255,255,255,0.8); }
+
+    .valilehti.aktiivinen {
+      background: rgba(100,140,255,0.35);
+      color: rgba(255,255,255,0.95);
+      box-shadow: 0 2px 12px rgba(80,120,255,0.3), 0 1px 0 rgba(255,255,255,0.15) inset;
+    }
+
+    /* ── Näkymät ── */
+    .nakyma {
+      display: none;
+      width: min(360px, 100%);
+    }
+    .nakyma.aktiivinen { display: block; }
+
+    /* ════════════════════════════
+       LASKIN
+    ════════════════════════════ */
+    .laskin {
+      border-radius: 36px;
+      overflow: hidden;
+      background: rgba(30, 30, 40, 0.55);
+      backdrop-filter: blur(24px) saturate(1.6);
+      -webkit-backdrop-filter: blur(24px) saturate(1.6);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 1.5px 0 rgba(255,255,255,0.22) inset;
+    }
+
+    .naytto {
+      padding: 28px 24px 18px;
+      text-align: right;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .historia {
+      font-size: 14px;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.04em;
+      min-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .syote {
+      font-size: clamp(28px, 8vw, 42px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.95);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-shadow: 0 2px 16px rgba(120,160,255,0.3);
+    }
+
+    .napit {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+      padding: 1px;
+    }
+
+    .napit button {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: clamp(16px, 4vw, 22px);
+      font-weight: 400;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.18s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .napit button::after {
+      content: '';
+      position: absolute;
+      top: 18%; left: 50%;
+      transform: translateX(-50%);
+      width: 50%; height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .btn-numero { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.92); box-shadow: 0 2px 0 rgba(255,255,255,0.08) inset; }
+    .btn-numero:hover { background: rgba(255,255,255,0.16); }
+    .btn-op { background: rgba(100,140,255,0.22); color: rgba(180,210,255,0.95); font-weight: 500; box-shadow: 0 2px 0 rgba(160,190,255,0.12) inset; }
+    .btn-op:hover { background: rgba(100,140,255,0.32); }
+    .btn-yhtalo { background: radial-gradient(ellipse at 35% 25%, rgba(120,180,255,0.7) 0%, rgba(80,130,240,0.5) 100%); color: white; font-weight: 600; font-size: clamp(20px, 5vw, 28px); box-shadow: 0 4px 16px rgba(80,130,255,0.3), 0 2px 0 rgba(255,255,255,0.2) inset; }
+    .btn-yhtalo:hover { background: radial-gradient(ellipse at 35% 25%, rgba(140,200,255,0.8) 0%, rgba(100,150,255,0.6) 100%); }
+    .btn-ac { background: rgba(255,100,100,0.20); color: rgba(255,180,180,0.95); font-weight: 500; box-shadow: 0 2px 0 rgba(255,120,120,0.10) inset; }
+    .btn-ac:hover { background: rgba(255,100,100,0.30); }
+    .btn-nolla { grid-column: span 2; }
+
+    .napit button:active {
+      transform: translateY(4px) scale(0.96);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+
+    /* ════════════════════════════
+       PROSENTTILASKURI
+       Laskimen korkeus: 110px näyttö + 5×80px napit + 2px gap = 512px
+    ════════════════════════════ */
+    .prosentti-kehys {
+      border-radius: 36px;
+      background: rgba(30, 30, 40, 0.55);
+      backdrop-filter: blur(24px) saturate(1.6);
+      -webkit-backdrop-filter: blur(24px) saturate(1.6);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 1.5px 0 rgba(255,255,255,0.22) inset;
+      height: 566px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 24px 24px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* Tapa-valitsin sisällä prosenttilaskuria */
+    .laskunvalitsin {
+      display: flex;
+      background: rgba(0,0,0,0.25);
+      border-radius: 18px;
+      padding: 4px;
+      gap: 4px;
+      flex-shrink: 0;
+      margin-bottom: 20px;
+    }
+
+    .laskunvalitsin button {
+      appearance: none;
+      border: none;
+      flex: 1;
+      padding: 10px 6px;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.45);
+      background: transparent;
+      transition: background 0.3s ease, color 0.3s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .laskunvalitsin button:active {
+      transform: translateY(3px) scale(0.97);
+      transition: transform 0.08s ease;
+    }
+
+    .laskunvalitsin button.aktiivinen {
+      background: rgba(100,140,255,0.32);
+      color: rgba(255,255,255,0.95);
+      box-shadow: 0 2px 8px rgba(80,120,255,0.25), 0 1px 0 rgba(255,255,255,0.12) inset;
+    }
+
+    /* Kenttä-pari: label + input */
+    .kentta-pari {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .kentta-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      padding-left: 4px;
+    }
+
+    .kentta-rivi {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .p-input {
+      flex: 1;
+      height: 52px;
+      background: rgba(255,255,255,0.10);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 18px;
+      color: rgba(255,255,255,0.95);
+      font-family: inherit;
+      font-size: 22px;
+      font-weight: 300;
+      padding: 0 16px;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      -moz-appearance: textfield;
+    }
+
+    .p-input::-webkit-outer-spin-button,
+    .p-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .p-input::placeholder { color: rgba(255,255,255,0.22); font-size: 15px; }
+
+    .p-input:focus {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(120,170,255,0.6);
+      box-shadow: 0 0 0 3px rgba(100,150,255,0.2);
+    }
+
+    .yksikko {
+      font-size: 20px;
+      font-weight: 300;
+      color: rgba(180,210,255,0.7);
+      min-width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Väliviiva kenttien välissä */
+    .kentta-väli { flex-shrink: 0; height: 16px; }
+
+    /* Laske-nappi */
+    .p-laske {
+      appearance: none;
+      border: none;
+      width: 100%;
+      height: 56px;
+      border-radius: 20px;
+      background: radial-gradient(ellipse at 35% 25%, rgba(120,180,255,0.7) 0%, rgba(80,130,240,0.5) 100%);
+      color: white;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(80,130,255,0.35), 0 2px 0 rgba(255,255,255,0.18) inset;
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s cubic-bezier(0.22,1,0.36,1), background 0.2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 20px;
+    }
+
+    .p-laske::after {
+      content: '';
+      position: absolute;
+      top: 18%; left: 50%;
+      transform: translateX(-50%);
+      width: 40%; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .p-laske:hover { background: radial-gradient(ellipse at 35% 25%, rgba(140,200,255,0.8) 0%, rgba(100,150,255,0.6) 100%); }
+
+    .p-laske:active {
+      transform: translateY(4px) scale(0.97);
+      box-shadow: 0 1px 6px rgba(80,130,255,0.2) inset;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    /* Tuloslaatikko */
+    .p-tulos {
+      flex: 1;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      gap: 6px;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .p-tulos-luku {
+      font-size: clamp(26px, 7vw, 38px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 2px 16px rgba(120,160,255,0.35);
+      line-height: 1;
+    }
+
+    .p-tulos-selite {
+      font-size: 12px;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+    }
+
+    /* Tyhjennä-nappi */
+    .p-nollaa {
+      appearance: none;
+      border: none;
+      width: 100%;
+      height: 38px;
+      border-radius: 14px;
+      background: radial-gradient(ellipse at 35% 25%, rgba(255,120,120,0.45) 0%, rgba(200,60,60,0.3) 100%);
+      color: rgba(255,200,200,0.95);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      box-shadow: 0 3px 14px rgba(200,60,60,0.25), 0 1.5px 0 rgba(255,255,255,0.14) inset;
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s cubic-bezier(0.22,1,0.36,1), background 0.2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 10px;
+    }
+
+    .p-nollaa::after {
+      content: '';
+      position: absolute;
+      top: 18%; left: 50%;
+      transform: translateX(-50%);
+      width: 40%; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      filter: blur(3px);
+      pointer-events: none;
+    }
+
+    .p-nollaa:hover {
+      background: radial-gradient(ellipse at 35% 25%, rgba(255,140,140,0.55) 0%, rgba(220,80,80,0.4) 100%);
+    }
+
+    .p-nollaa:active {
+      transform: translateY(4px) scale(0.97);
+      box-shadow: 0 1px 4px rgba(200,60,60,0.2) inset;
+      transition: transform 0.08s ease, box-shadow 0.08s ease;
+    }
+
+    /* ── Responsiivisuus ── */
+    @media (max-width: 400px) {
+      .laskin, .prosentti-kehys { border-radius: 24px; }
+      .naytto { height: 90px; padding: 16px 16px 12px; }
+      .napit button { height: 66px; }
+      .prosentti-kehys { height: 426px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button, .p-laske, .valilehti { transition: none; }
+    }
+  </style>
 </head>
 <body>
 
-  <main class="container">
-    <header class="otsikko">LASKIN</header>
+<!-- Välilehtipalkki -->
+<nav class="valilehdet" role="tablist">
+  <button class="valilehti aktiivinen" role="tab" aria-selected="true"  onclick="vaihda('laskin')">Laskin</button>
+  <button class="valilehti"            role="tab" aria-selected="false" onclick="vaihda('prosentti')">Prosenttilaskuri</button>
+</nav>
 
-    <div style="display:flex; justify-content:center; align-items:center; gap:6px;">
-      <input type="number" id="luku1" placeholder="Syötä luku">
-      <span class="plus-sign">+</span>
-      <input type="number" id="luku2" placeholder="Syötä luku">
+<!-- ════ LASKIN ════ -->
+<div class="nakyma aktiivinen" id="nakyma-laskin" role="tabpanel">
+  <div class="laskin" role="application" aria-label="Laskin">
+    <div class="naytto">
+      <div class="historia" id="historia" aria-live="polite"></div>
+      <div class="syote"    id="syote"    aria-live="assertive">0</div>
+    </div>
+    <div class="napit">
+      <button class="btn-ac"     onclick="toiminto('ac')"      aria-label="Tyhjennä">AC</button>
+      <button class="btn-op"     onclick="toiminto('negate')"  aria-label="Vaihda etumerkki">+/−</button>
+      <button class="btn-op"     onclick="toiminto('percent')" aria-label="Prosentti">%</button>
+      <button class="btn-op"     onclick="toiminto('/')"       aria-label="Jaetaan">÷</button>
+      <button class="btn-numero" onclick="toiminto('7')">7</button>
+      <button class="btn-numero" onclick="toiminto('8')">8</button>
+      <button class="btn-numero" onclick="toiminto('9')">9</button>
+      <button class="btn-op"     onclick="toiminto('*')"       aria-label="Kerrotaan">×</button>
+      <button class="btn-numero" onclick="toiminto('4')">4</button>
+      <button class="btn-numero" onclick="toiminto('5')">5</button>
+      <button class="btn-numero" onclick="toiminto('6')">6</button>
+      <button class="btn-op"     onclick="toiminto('-')"       aria-label="Vähennetään">−</button>
+      <button class="btn-numero" onclick="toiminto('1')">1</button>
+      <button class="btn-numero" onclick="toiminto('2')">2</button>
+      <button class="btn-numero" onclick="toiminto('3')">3</button>
+      <button class="btn-op"     onclick="toiminto('+')"       aria-label="Lisätään">+</button>
+      <button class="btn-numero btn-nolla" onclick="toiminto('0')">0</button>
+      <button class="btn-numero"           onclick="toiminto('.')">.</button>
+      <button class="btn-yhtalo"           onclick="toiminto('=')" aria-label="Yhtä suuri">=</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PROSENTTILASKURI ════ -->
+<div class="nakyma" id="nakyma-prosentti" role="tabpanel">
+  <div class="prosentti-kehys" role="application" aria-label="Prosenttilaskuri">
+
+    <!-- Tapa-valitsin -->
+    <div class="laskunvalitsin" role="group" aria-label="Laskutapa">
+      <button class="aktiivinen" id="tapa-maara"  onclick="vaihdaTapa('maara')">Kuinka paljon</button>
+      <button                    id="tapa-osuus"  onclick="vaihdaTapa('osuus')">Kuinka monta prosenttia</button>
     </div>
 
-    <div class="nappi-rivi">
-      <button id="laske-nappi" onclick="laskeSumma()">=</button>
-      <button id="nollaa-nappi" onclick="nollaaLaskin()">Nollaa</button>
+    <!-- TAPA 1: Kuinka paljon on X% luvusta Y -->
+    <div id="syotteet-maara">
+      <div class="kentta-pari">
+        <div class="kentta-label">Kuinka paljon on</div>
+        <div class="kentta-rivi">
+          <input class="p-input" id="maara-p" type="number" placeholder="0" aria-label="Prosenttiosuus">
+          <span class="yksikko">%</span>
+        </div>
+      </div>
+      <div class="kentta-väli"></div>
+      <div class="kentta-pari">
+        <div class="kentta-label">Luvusta</div>
+        <div class="kentta-rivi">
+          <input class="p-input" id="maara-b" type="number" placeholder="0" aria-label="Kokonaisluku">
+          <span class="yksikko"></span>
+        </div>
+      </div>
     </div>
 
-    <div class="tulos-laatikko">
-      <p id="tulos"></p>
+    <!-- TAPA 2: Kuinka monta % A on B:stä -->
+    <div id="syotteet-osuus" style="display:none">
+      <div class="kentta-pari">
+        <div class="kentta-label">Luku</div>
+        <div class="kentta-rivi">
+          <input class="p-input" id="osuus-a" type="number" placeholder="0" aria-label="Luku">
+          <span class="yksikko"></span>
+        </div>
+      </div>
+      <div class="kentta-väli"></div>
+      <div class="kentta-pari">
+        <div class="kentta-label">Luvusta</div>
+        <div class="kentta-rivi">
+          <input class="p-input" id="osuus-b" type="number" placeholder="0" aria-label="Kokonaisuus">
+          <span class="yksikko"></span>
+        </div>
+      </div>
     </div>
-  </main>
 
-  <script>
-    function laskeSumma() {
-      let luku1 = parseFloat(document.getElementById("luku1").value.replace(",", "."));
-      let luku2 = parseFloat(document.getElementById("luku2").value.replace(",", "."));
+    <button class="p-laske" onclick="laskePros()">Laske</button>
 
-      if (isNaN(luku1) || isNaN(luku2)) {
-        document.getElementById("tulos").textContent = "Syötä molemmat luvut!";
-        return;
-      }
-      if (!isFinite(luku1) || !isFinite(luku2)) {
-        document.getElementById("tulos").textContent = "Syötä validit luvut!";
-        return;
-      }
-      if (luku1 < 0 || luku2 < 0) {
-        document.getElementById("tulos").textContent = "Syötä positiiviset luvut!";
-        return;
-      }
+    <div class="p-tulos" id="p-tulos" aria-live="assertive">
+      <span class="p-tulos-luku"   id="p-tulos-luku"></span>
+      <span class="p-tulos-selite" id="p-tulos-selite"></span>
+    </div>
 
-      let summa = luku1 + luku2;
-      if (!isFinite(summa)) {
-        document.getElementById("tulos").textContent = "Tulos on liian suuri!";
-        return;
-      }
+    <button class="p-nollaa" onclick="nollaaPros()">Tyhjennä kentät</button>
 
-      document.getElementById("tulos").textContent = "Tulos: " + summa.toFixed(2);
+  </div>
+</div>
+
+<script>
+  /* ══════ VÄLILEHDET ══════ */
+  function vaihda(kohde) {
+    document.querySelectorAll('.nakyma').forEach(el => el.classList.remove('aktiivinen'));
+    document.querySelectorAll('.valilehti').forEach(el => {
+      el.classList.remove('aktiivinen');
+      el.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById('nakyma-' + kohde).classList.add('aktiivinen');
+    const btn = [...document.querySelectorAll('.valilehti')]
+      .find(b => b.textContent.toLowerCase().includes(kohde === 'laskin' ? 'laskin' : 'pros'));
+    if (btn) { btn.classList.add('aktiivinen'); btn.setAttribute('aria-selected', 'true'); }
+  }
+
+  /* ══════ LASKIN ══════ */
+  let syoteArvo = '0', tallennettu = null, operaattori = null, odottaaUuttaLukua = false;
+  const syoteEl   = document.getElementById('syote');
+  const historiaEl = document.getElementById('historia');
+
+  function paivitaNaytto() {
+    let n = syoteArvo;
+    if (n !== 'Virhe' && n.length > 12) n = parseFloat(n).toPrecision(6);
+    syoteEl.textContent = n;
+  }
+
+  function toiminto(arvo) {
+    if (arvo === 'ac') {
+      syoteArvo = '0'; tallennettu = null; operaattori = null; odottaaUuttaLukua = false;
+      historiaEl.textContent = ''; paivitaNaytto(); return;
     }
-
-    function nollaaLaskin() {
-      document.getElementById("luku1").value = "";
-      document.getElementById("luku2").value = "";
-      document.getElementById("tulos").textContent = "";
+    if (arvo === 'negate') { syoteArvo = String(parseFloat(syoteArvo) * -1); paivitaNaytto(); return; }
+    if (arvo === 'percent') { syoteArvo = String(parseFloat(syoteArvo) / 100); paivitaNaytto(); return; }
+    if (['+','-','*','/'].includes(arvo)) {
+      if (tallennettu !== null && !odottaaUuttaLukua) laske();
+      tallennettu = parseFloat(syoteArvo); operaattori = arvo; odottaaUuttaLukua = true;
+      historiaEl.textContent = syoteArvo + ' ' + {'+':'+','-':'−','*':'×','/':'÷'}[arvo]; return;
     }
-  </script>
+    if (arvo === '=') {
+      if (tallennettu === null || operaattori === null) return;
+      const h = historiaEl.textContent + ' ' + syoteArvo;
+      laske(); historiaEl.textContent = h + ' =';
+      operaattori = null; tallennettu = null; odottaaUuttaLukua = true; return;
+    }
+    if (arvo === '.') {
+      if (odottaaUuttaLukua) { syoteArvo = '0.'; odottaaUuttaLukua = false; paivitaNaytto(); return; }
+      if (!syoteArvo.includes('.')) { syoteArvo += '.'; paivitaNaytto(); } return;
+    }
+    if (odottaaUuttaLukua) { syoteArvo = arvo; odottaaUuttaLukua = false; }
+    else { syoteArvo = syoteArvo === '0' ? arvo : syoteArvo + arvo; }
+    paivitaNaytto();
+  }
+
+  function laske() {
+    const n = parseFloat(syoteArvo); let t;
+    switch (operaattori) {
+      case '+': t = tallennettu + n; break;
+      case '-': t = tallennettu - n; break;
+      case '*': t = tallennettu * n; break;
+      case '/':
+        if (n === 0) { syoteArvo = 'Virhe'; paivitaNaytto(); return; }
+        t = tallennettu / n; break;
+    }
+    syoteArvo = String(parseFloat(t.toPrecision(10))); paivitaNaytto();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('nakyma-laskin').classList.contains('aktiivinen')) return;
+    if ('0123456789'.includes(e.key)) { toiminto(e.key); return; }
+    if (e.key==='+') { toiminto('+'); return; }
+    if (e.key==='-') { toiminto('-'); return; }
+    if (e.key==='*') { toiminto('*'); return; }
+    if (e.key==='/') { e.preventDefault(); toiminto('/'); return; }
+    if (e.key==='Enter'||e.key==='=') { toiminto('='); return; }
+    if (e.key==='.'||e.key===',') { toiminto('.'); return; }
+    if (e.key==='Escape') { toiminto('ac'); return; }
+    if (e.key==='Backspace') {
+      syoteArvo = syoteArvo.length > 1 ? syoteArvo.slice(0,-1) : '0';
+      paivitaNaytto();
+    }
+  });
+
+  /* ══════ PROSENTTILASKURI ══════ */
+  let aktiivinenTapa = 'maara';
+
+  function vaihdaTapa(tapa) {
+    aktiivinenTapa = tapa;
+    document.getElementById('tapa-maara').classList.toggle('aktiivinen', tapa === 'maara');
+    document.getElementById('tapa-osuus').classList.toggle('aktiivinen', tapa === 'osuus');
+    document.getElementById('syotteet-maara').style.display = tapa === 'maara' ? 'block' : 'none';
+    document.getElementById('syotteet-osuus').style.display = tapa === 'osuus' ? 'block' : 'none';
+    nollaaPros();
+  }
+
+  function laskePros() {
+    const luku   = document.getElementById('p-tulos-luku');
+    const selite = document.getElementById('p-tulos-selite');
+
+    if (aktiivinenTapa === 'maara') {
+      const p = parseFloat(document.getElementById('maara-p').value);
+      const b = parseFloat(document.getElementById('maara-b').value);
+      if (isNaN(p) || isNaN(b)) { luku.textContent = ''; selite.textContent = 'Syötä molemmat luvut'; return; }
+      const tulos = (p / 100) * b;
+      luku.textContent   = muotoile(tulos);
+      selite.textContent = p + ' % luvusta ' + muotoile(b) + ' on ' + muotoile(tulos);
+    } else {
+      const a = parseFloat(document.getElementById('osuus-a').value);
+      const b = parseFloat(document.getElementById('osuus-b').value);
+      if (isNaN(a) || isNaN(b)) { luku.textContent = ''; selite.textContent = 'Syötä molemmat luvut'; return; }
+      if (b === 0) { luku.textContent = ''; selite.textContent = 'Jakaja ei voi olla nolla'; return; }
+      const tulos = (a / b) * 100;
+      luku.textContent   = muotoile(tulos) + ' %';
+      selite.textContent = muotoile(a) + ' on ' + muotoile(tulos) + ' % luvusta ' + muotoile(b);
+    }
+  }
+
+  function muotoile(n) {
+    return parseFloat(n.toFixed(4)).toLocaleString('fi-FI');
+  }
+
+  function nollaaPros() {
+    ['osuus-a','osuus-b','maara-p','maara-b'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('p-tulos-luku').textContent   = '';
+    document.getElementById('p-tulos-selite').textContent = '';
+  }
+</script>
 
 </body>
 </html>
