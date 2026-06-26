@@ -1,5 +1,5 @@
 {
-  "name": "Laskin",
+  "name": "laskin",
   "version": "3.0.2",
   "main": "index.html",
   "scripts": {
@@ -9,12 +9,12 @@
     "type": "git",
     "url": "git+https://github.com/Welger1/laskin.git"
   },
-  "keywords": [],
+  "keywords": ["laskin", "calculator", "prosenttilaskuri"],
   "author": "Olli Suominen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Welger1/laskin/issues"
   },
   "homepage": "https://github.com/Welger1/laskin#readme",
-  "description": ""
+  "description": "Yksinkertainen laskin ja prosenttilaskurisovellus"
 }
