@@ -1,7 +1,7 @@
 {
-  "name": "laskin",
+  "name": "Laskin",
   "version": "3.0.0",
-  "main": "laskin.html",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "Olli Suominen",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Welger1/laskin/issues"
   },
